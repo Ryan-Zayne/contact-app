@@ -2,10 +2,13 @@
 import mongoose from 'mongoose';
 
 const connectDB = async () => {
+	// prettier-ignore
 	try {
 		const connect = await mongoose.connect(process.env.MONGO_URI);
-		console.log(`MongoDB connected: ${connect.connection.host}`, connect.connection.name);
+		console.log(`MongoDB connected: ${connect.connection.host}`.cyan.italic.underline)
+
 	} catch (error) {
+
 		console.log(error);
 		throw new Error(error);
 	}

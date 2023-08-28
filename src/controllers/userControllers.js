@@ -31,7 +31,7 @@ export const registerUser = expressAsyncHandler(async (req, res) => {
 
 	if (newUser) {
 		res.status(201).json({
-			id: newUser.id,
+			_id: newUser.id,
 			email: newUser.email,
 		});
 	} else {
