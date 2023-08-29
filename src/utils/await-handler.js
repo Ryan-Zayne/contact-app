@@ -1,20 +1,19 @@
 /**
- * @param { Promise } promise
+ * @param { Promise } promise - the promise to be awaited
  * @param { Object } errorExtension - Additional Information you can pass to the err object
- * @return { Promise }
+ * @returns { [Promise, Error] }  An array containing the resolved data and the error
  */
 
 export const to = async (promise, errorExtension) => {
 	// prettier-ignore
 	try {
 		const data = await promise;
-
 		return [data, null];
 
 	} catch (error) {
 		if (errorExtension) {
-			const parsedError = { ...error, ...errorExtension };
-			return [null, parsedError];
+			const extendedError = { ...error, ...errorExtension };
+			return [null, extendedError];
 		}
 
 		return [null, error];
