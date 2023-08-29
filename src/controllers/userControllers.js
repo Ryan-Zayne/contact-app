@@ -31,15 +31,15 @@ export const registerUser = asyncHandler(async (req, res) => {
 		password: hashedPassword,
 	});
 
-	if (newUser) {
-		res.status(201).json({
-			_id: newUser.id,
-			email: newUser.email,
-		});
-	} else {
+	if (!newUser) {
 		res.status(400);
 		throw new Error('User data is not valid');
 	}
+
+	res.status(201).json({
+		_id: newUser.id,
+		email: newUser.email,
+	});
 });
 
 // @desc Login User
@@ -55,24 +55,26 @@ export const loginUser = asyncHandler(async (req, res) => {
 
 	// Comparing password with hashedPassword in database
 	const user = await User.findOne({ email });
+	const isValidPassword = Boolean(user && (await bcrypt.compare(password, user.password)));
 
-	if (user && (await bcrypt.compare(password, user.password))) {
-		const accessToken = jwt.sign(
-			{
-				user: {
-					username: user.username,
-					email: user.email,
-					id: user.id,
-				},
-			},
-			process.env.JWT_SECRET,
-			{ expiresIn: '30m' }
-		);
-		res.status(200).json({ accessToken });
-	} else {
+	if (!isValidPassword) {
 		res.status(401);
-		throw new Error('email or password is invalid');
+		throw new Error('Email or password is invalid');
 	}
+
+	const accessToken = jwt.sign(
+		{
+			user: {
+				username: user.username,
+				email: user.email,
+				id: user.id,
+			},
+		},
+		process.env.JWT_SECRET,
+		{ expiresIn: '30m' }
+	);
+
+	res.status(200).json({ accessToken });
 });
 
 // @desc Get current User Info

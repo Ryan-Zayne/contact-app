@@ -1,6 +1,6 @@
 import colors from '@colors/colors';
 import express from 'express';
-import connectDB from './config/dbConnection.js';
+import connectToDB from './config/connectToDB.js';
 import errorHandler from './middleware/errorHandler.js';
 import contactRouter from './routes/contactRoutes.js';
 import userRouter from './routes/userRoutes.js';
@@ -10,7 +10,7 @@ colors.enable();
 const port = process.env.PORT ?? 5001;
 
 // Connect to DataBase
-connectDB();
+connectToDB();
 
 // Express app instance
 const app = express();

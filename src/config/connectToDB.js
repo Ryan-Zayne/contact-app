@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import mongoose from 'mongoose';
 
-const connectDB = async () => {
+const connectToDB = async () => {
 	// prettier-ignore
 	try {
 		const connect = await mongoose.connect(process.env.MONGO_URI);
@@ -12,4 +12,4 @@ const connectDB = async () => {
 	}
 };
 
-export default connectDB;
+export default connectToDB;
