@@ -8,6 +8,7 @@ export const to = async (promise, errorExtension) => {
 	// prettier-ignore
 	try {
 		const data = await promise;
+
 		return [data, null];
 
 	} catch (error) {

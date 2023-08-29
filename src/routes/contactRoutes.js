@@ -6,17 +6,14 @@ import {
 	getContacts,
 	updateContact,
 } from '../controllers/contactControllers.js';
+import validateTokenHandler from '../middleware/validateTokenHandler.js';
 
 const contactRouter = express.Router();
 
-contactRouter.get('/', getContacts);
+contactRouter.use(validateTokenHandler);
 
-contactRouter.post('/', createContact);
+contactRouter.route('/').get(getContacts).post(createContact);
 
-contactRouter.get('/:id', getContactById);
-
-contactRouter.put('/:id', updateContact);
-
-contactRouter.delete('/:id', deleteContact);
+contactRouter.route('/:id').get(getContactById).put(updateContact).delete(deleteContact);
 
 export default contactRouter;

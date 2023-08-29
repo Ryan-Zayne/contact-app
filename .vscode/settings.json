@@ -1,4 +1,6 @@
 {
 	"javascript.preferences.importModuleSpecifier": "shortest",
-	"javascript.preferences.importModuleSpecifierEnding": "js"
+	"javascript.preferences.importModuleSpecifierEnding": "js",
+	"editor.tabCompletion": "on",
+	"diffEditor.codeLens": true
 }

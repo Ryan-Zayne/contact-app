@@ -1,9 +1,9 @@
 import colors from '@colors/colors';
 import express from 'express';
-import connectDB from './src/config/dbConnection.js';
-import errorHandler from './src/middleware/errorHandler.js';
-import contactRouter from './src/routes/contactRoutes.js';
-import userRouter from './src/routes/userRoutes.js';
+import connectDB from './config/dbConnection.js';
+import errorHandler from './middleware/errorHandler.js';
+import contactRouter from './routes/contactRoutes.js';
+import userRouter from './routes/userRoutes.js';
 
 colors.enable();
 

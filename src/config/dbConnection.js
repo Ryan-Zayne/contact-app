@@ -8,8 +8,6 @@ const connectDB = async () => {
 		console.log(`MongoDB connected: ${connect.connection.host}`.cyan.italic.underline)
 
 	} catch (error) {
-
-		console.log(error);
 		throw new Error(error);
 	}
 };
