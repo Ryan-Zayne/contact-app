@@ -1,11 +1,10 @@
-import colors from '@colors/colors';
+import '@colors/colors';
+import 'dotenv/config.js';
 import express from 'express';
 import connectToDB from './config/connectToDB.js';
 import errorHandler from './middleware/errorHandler.js';
 import contactRouter from './routes/contactRoutes.js';
 import userRouter from './routes/userRoutes.js';
-
-colors.enable();
 
 const port = process.env.PORT ?? 5001;
 

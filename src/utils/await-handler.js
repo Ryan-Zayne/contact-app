@@ -13,6 +13,7 @@ export const to = async (promise, errorExtension) => {
 	} catch (error) {
 		if (errorExtension) {
 			const extendedError = { ...error, ...errorExtension };
+
 			return [null, extendedError];
 		}
 
