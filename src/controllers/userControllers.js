@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
-import asyncHandler from '../utils/asyncHandler.js';
+import asyncHandler from '../utils/asyncHandler.utils.js';
 
 // @desc Register a User
 // @route POST /api/users/register
@@ -14,14 +14,12 @@ export const registerUser = asyncHandler(async (req, res) => {
 		throw new Error('All fields are mandatory!');
 	}
 
-	// Checking if user already exists
 	const userExists = await User.findOne({ email });
 	if (userExists) {
 		res.status(400);
 		throw new Error('User already registered!');
 	}
 
-	// Hashing the password
 	const saltRounds = 10;
 	const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -37,7 +35,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 	}
 
 	res.status(201).json({
-		_id: newUser.id,
+		id: newUser.id,
 		email: newUser.email,
 	});
 });
@@ -53,7 +51,6 @@ export const loginUser = asyncHandler(async (req, res) => {
 		throw new Error('All fields are mandatory!');
 	}
 
-	// Comparing password with hashedPassword in database
 	const user = await User.findOne({ email });
 	const isValidPassword = Boolean(user && (await bcrypt.compare(password, user.password)));
 
@@ -62,24 +59,22 @@ export const loginUser = asyncHandler(async (req, res) => {
 		throw new Error('Email or password is invalid');
 	}
 
-	const accessToken = jwt.sign(
-		{
-			user: {
-				username: user.username,
-				email: user.email,
-				id: user.id,
-			},
+	const payload = {
+		user: {
+			username: user.username,
+			email: user.email,
+			id: user.id,
 		},
-		process.env.JWT_SECRET,
-		{ expiresIn: '30m' }
-	);
+	};
 
-	res.status(200).json({ accessToken });
+	const encodedJwtToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '30m' });
+
+	res.json({ encodedJwtToken });
 });
 
 // @desc Get current User Info
 // @route GET /api/users/current
 // @access private
 export const getCurrentUser = asyncHandler(async (req, res) => {
-	res.status(200).json(req.user);
+	res.json(req.user);
 });

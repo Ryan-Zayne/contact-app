@@ -1,6 +1,6 @@
 import express from 'express';
 import { getCurrentUser, loginUser, registerUser } from '../controllers/userControllers.js';
-import validateTokenHandler from '../middleware/validateTokenHandler.js';
+import authenticateUser from '../middleware/authenticateUser.middleware.js';
 
 const userRouter = express.Router();
 
@@ -8,7 +8,7 @@ const userRouter = express.Router();
 userRouter.post('/register', registerUser);
 userRouter.post('/login', loginUser);
 
-// Token Validation middleware is used for only this route
-userRouter.get('/current', validateTokenHandler, getCurrentUser);
+// Token Validation middleware applied for only this route
+userRouter.get('/current', authenticateUser, getCurrentUser);
 
 export default userRouter;

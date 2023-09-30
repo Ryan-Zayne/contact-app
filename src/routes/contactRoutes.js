@@ -6,12 +6,12 @@ import {
 	getContacts,
 	updateContact,
 } from '../controllers/contactControllers.js';
-import validateTokenHandler from '../middleware/validateTokenHandler.js';
+import authenticateUser from '../middleware/authenticateUser.middleware.js';
 
 const contactRouter = express.Router();
 
-// Token Validation middleware for all contact routes
-contactRouter.use(validateTokenHandler);
+// Token Validation middleware applied to all contact routes
+contactRouter.use(authenticateUser);
 
 // Routes
 contactRouter.route('/').get(getContacts).post(createContact);
