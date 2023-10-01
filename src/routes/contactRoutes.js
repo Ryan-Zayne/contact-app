@@ -15,6 +15,6 @@ contactRouter.use(authenticateUser);
 
 // Routes
 contactRouter.route('/').get(getContacts).post(createContact);
-contactRouter.route('/:id').get(getContactById).put(updateContact).delete(deleteContact);
+contactRouter.route('/:id').get(getContactById).patch(updateContact).delete(deleteContact);
 
 export default contactRouter;

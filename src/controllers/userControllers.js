@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 import asyncHandler from '../utils/asyncHandler.utils.js';
+import { generateToken } from '../utils/generateToken.js';
 
 // @desc Register a User
 // @route POST /api/users/register
@@ -14,14 +14,15 @@ export const registerUser = asyncHandler(async (req, res) => {
 		throw new Error('All fields are mandatory!');
 	}
 
-	const userExists = await User.findOne({ email });
-	if (userExists) {
+	const existingUser = await User.findOne({ email });
+
+	if (existingUser) {
 		res.status(400);
 		throw new Error('User already registered!');
 	}
 
 	const saltRounds = 10;
-	const hashedPassword = await bcrypt.hash(password, saltRounds);
+	const hashedPassword = await bcrypt.hash(String(password), saltRounds);
 
 	const newUser = await User.create({
 		username,
@@ -36,6 +37,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 
 	res.status(201).json({
 		id: newUser.id,
+		username: newUser.username,
 		email: newUser.email,
 	});
 });
@@ -52,29 +54,55 @@ export const loginUser = asyncHandler(async (req, res) => {
 	}
 
 	const user = await User.findOne({ email });
-	const isValidPassword = Boolean(user && (await bcrypt.compare(password, user.password)));
+	const isValidPassword = Boolean(user && (await bcrypt.compare(String(password), user.password)));
 
 	if (!isValidPassword) {
 		res.status(401);
 		throw new Error('Email or password is invalid');
 	}
 
-	const payload = {
-		user: {
-			username: user.username,
-			email: user.email,
-			id: user.id,
-		},
-	};
+	const encodedToken = generateToken(user.id);
 
-	const encodedJwtToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '30m' });
+	res.json({ encodedToken });
+});
 
-	res.json({ encodedJwtToken });
+// @desc Update current User Profile
+// @route PATCH /api/users/update-profile
+// @access private
+export const updateUserProfile = asyncHandler(async (req, res) => {
+	const userId = req.user.id;
+	const user = await User.findById(userId);
+
+	if (!user) {
+		res.status(404);
+		throw new Error('User not found');
+	}
+
+	const { username = user.username, email = user.email, password } = req.body;
+
+	let hashedPassword;
+	if (password) {
+		const saltRounds = 10;
+		hashedPassword = await bcrypt.hash(String(password), saltRounds);
+	}
+
+	const updatedUser = await User.findByIdAndUpdate(
+		userId,
+		{ username, email, password: hashedPassword ?? user.password },
+		{ new: true }
+	);
+
+	res.json({ username: updatedUser.username, email: updatedUser.email });
 });
 
 // @desc Get current User Info
 // @route GET /api/users/current
 // @access private
 export const getCurrentUser = asyncHandler(async (req, res) => {
+	if (!req.user) {
+		res.status(401);
+		throw new Error('User not found');
+	}
+
 	res.json(req.user);
 });
