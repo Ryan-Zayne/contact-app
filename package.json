@@ -16,7 +16,7 @@
 		"express": "^4.19.2",
 		"express-async-handler": "^1.2.0",
 		"jsonwebtoken": "^9.0.1",
-		"mongoose": "^7.4.5"
+		"mongoose": "^7.8.4"
 	},
 	"devDependencies": {
 		"@colors/colors": "^1.6.0",
